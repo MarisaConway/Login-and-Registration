@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Login and Register</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body>
+    <h1>Login and Registration</h1>
+    <br> 
+    <div>
+        <h3>Register here!</h3>
+        {% with messages = get_flashed_messages() %}     
+            {% if messages %}                           
+                {% for message in messages %}            
+                    <p class="text-danger">{{message}}</p>                   
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <form action="/create" method="POST">
+            <p>First Name: <br> <input type="text" name="first_name"></p>
+            <p>Last Name: <br> <input type="text" name="last_name"></p>
+            <p>Email: <br> <input type="text" name="email"></p>
+            <p>Password: <br> <input type="text" name="password"></p>
+            <p>Confirm password: <br> <input type="text" name="c_password"></p>
+            <input type="submit" value="Register">
+        </form>   
+    </div>
+    
+</body>
+</html>
