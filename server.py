@@ -20,19 +20,21 @@ def create():
     if len(request.form['first_name']) < 1:
         is_valid = False 
         flash("Please enter a first name")
-    if 'first_name'.isalpha() == True:
-        print("All characters are alphabets")
+    elif 'first_name'.isalpha() == True:
+        is_valid = False
+        flash("All characters are not alphabets")
     
     else:
-        print("All characters are not alphabets.")
+        print("All characters are alphabets.")
 
-    if len(request.form['last_name']) < 1:
+    if len(request.form['last_name']) < 1: 
         is_valid = False 
         flash("Please enter a last name")
-    if 'last_name'.isalpha() == True:
-        print("All characters are alphabets.") 
+    elif 'last_name'.isalpha() == True:  
+        is_valid = False
+        flash("All characters are not alphabets.") 
     else:
-        print("All characters are not alphabets.")
+        print("All characters are alphabets.")
     
     if len(request.form['email']) < 2:
         is_valid = False
@@ -40,8 +42,22 @@ def create():
     elif not EMAIL_REGEX.match(request.form['email']):
         is_valid = False
         flash("Invalid email address!")
-    # if (mysql_num_rows)
 
+        # User.objects.all()
+        # User.objects.get(ID=5)
+        # if not User.objects.filter(email="asdf"):
+    else:
+        db = connectToMySQL("registration")
+        query = "SELECT email from people WHERE email = %(email)s;"
+        data = {
+            "email": request.form['email']
+
+        }
+        result = db.query_db(query,data)
+        print(result)
+        if len(result) > 0:
+            is_valid = False
+            flash("Email already exists!")
 
     if len(request.form['password']) < 8:
         flash("Please enter a valid password")
@@ -49,7 +65,6 @@ def create():
     if request.form['c_password'] != request.form['password']:
         is_valid = False
         flash("Password does not match")
-
     
     if is_valid==True:
         pw_hash = bcrypt.generate_password_hash(request.form['password'])  
