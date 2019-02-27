@@ -6,11 +6,19 @@
     <title>Login and Register</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <style>
+        div{
+            display:inline-block;
+            margin-left: 20%;
+    
+        }
+        
+    </style>
 </head>
 <body>
     <h1>Login and Registration</h1>
     <br> 
-    <div>
+    <div class = Register>
         <h3>Register here!</h3>
         {% with messages = get_flashed_messages() %}     
             {% if messages %}                           
@@ -25,8 +33,16 @@
             <p>Email: <br> <input type="text" name="email"></p>
             <p>Password: <br> <input type="password" name="password"></p>
             <p>Confirm password: <br> <input type="password" name="c_password"></p>
-            <input type="submit" value="Register">
+            <input type="submit" class="btn btn-success" value="Register">
         </form>   
+    </div>
+    <div class = login>
+        <h3>Login here!</h3>
+        <form action="/login" method="POST">
+            <p>Email: <br> <input type="text" name="email"></p>
+            <p>Password: <br> <input type="password" name="password"></p>
+            <input type="submit" class="btn btn-success" value="Login!">
+        </form>
     </div>
     
 </body>

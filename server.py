@@ -10,8 +10,9 @@ bcrypt = Bcrypt(app)
 def index():
     db= connectToMySQL('registration')
     people = db.query_db('SELECT * FROM people;')
-    print(people)
     return render_template("index.html", all_people = people)
+    
+
 
 
 @app.route("/create", methods=["POST"])
@@ -74,32 +75,85 @@ def create():
             "fn": request.form["first_name"],
             "ln": request.form["last_name"],
             "email": request.form["email"],
-            "pass_hash" : pw_hash
+            "pass_hash" : pw_hash.decode('utf-8')
         }
         db = connectToMySQL('registration')
         flash("Successfully added")
-        id = db.query_db(query,data)
+        userid = db.query_db(query,data)
         # print(id)
-        return redirect("/welcome/"+ str(id))
+        session['userid'] = userid
+        return redirect("/welcome")
     else:
         return redirect("/")
 
 
-@app.route("/welcome/<id>")
-def welcome(id):
-    print(id)
-    query = "SELECT * FROM people WHERE id=%(id_num)s;"
-
+@app.route("/login", methods=["POST"])
+def login():
+    # match = True
+    db = connectToMySQL("registration")
+    query = "SELECT * from people WHERE email = %(email)s;"
     data = {
-        "id_num": id
+        "email": request.form["email"]
+
+    }
+    result = db.query_db(query,data)
+
+    print(result)
+
+    if len(result) == 0:
+        flash("Email not found, please register!")
+        return redirect("/")
+
+    else:
+        if bcrypt.check_password_hash(result[0]['password'], request.form['password']) == True:
+            session['userid'] = result[0]['id']
+            return redirect("/welcome")
+        else:
+            flash("Password does not match!")
+            return redirect("/")
+            
+@app.route("/welcome")
+def welcome():
+    if 'userid' not in session:
+        flash("you must log in first")
+        return redirect("/")
+
+    query = "SELECT * FROM people WHERE id=%(id)s;"
+    data = {
+        "id": session['userid']
     }
     db = connectToMySQL('registration')
     userData = db.query_db(query, data)
-
-    print(userData)
     return render_template("welcome.html", userData=userData[0])
+
+        
+
+
+@app.route("/logout", methods=["POST"])
+def logout():
+    query = "SELECT * FROM people WHERE id=%(id)s;"
+
+    data = {
+        "id": session['userid']
+    }
+    db = connectToMySQL('registration')
+    userData = db.query_db(query, data)
+    
+    session.clear()
+    return redirect("/")
+
+
+
+
+
 
 
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+
+
+#pull up all the emails in database
+#scond query is to find out if the users email is in the database.
+#compare password with password in the system
